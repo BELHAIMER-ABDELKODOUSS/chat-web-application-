@@ -1,0 +1,98 @@
+<!-- chat/templates/chat/room.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Chat Room</title>
+    <style>
+      .container #chat-log,
+      #chat-message-input,
+      #chat-message-submit {
+        width: 30rem;
+      }
+      .container {
+        width: 45%;
+        margin: 3rem auto;
+      }
+      .title {
+        margin: 1rem 0;
+      }
+      #chat-message-input {
+        margin: 1rem 0 0 0;
+        width: 29rem;
+        padding: 7px;
+        border-radius: 5px;
+        border-style: solid;
+        border: 1 solid black;
+        border-color: #e1e1e1;
+        border-color: none;
+      }
+      #chat-message-submit {
+        width: 30rem;
+        margin: 1rem 0;
+        background-color: #0086fb;
+        border: none;
+        color: white;
+        height: 30px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="title">Chatbox</h1>
+      <textarea id="chat-log" cols="100" rows="20" s disabled></textarea><br />
+      <input
+        id="chat-message-input"
+        type="text"
+        size="100"
+        placeholder="Enter Text Here"
+      /><br />
+      <input
+        id="chat-message-submit"
+        class="send_btn"
+        type="button"
+        value="Send"
+      />
+    </div>
+    {{ room_name|json_script:"room-name" }}
+    <script>
+      const roomName = JSON.parse(
+        document.getElementById("room-name").textContent
+      );
+
+      const chatSocket = new WebSocket(
+        "ws://" + window.location.host + "/ws/chat/" + roomName + "/"
+      );
+
+      chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        document.querySelector("#chat-log").value += data.message + "\n";
+      };
+
+      chatSocket.onclose = function (e) {
+        console.error("Chat socket closed unexpectedly");
+      };
+
+      document.querySelector("#chat-message-input").focus();
+      document.querySelector("#chat-message-input").onkeyup = function (e) {
+        if (e.keyCode === 13) {
+          // enter, return
+          document.querySelector("#chat-message-submit").click();
+        }
+      };
+
+      document.querySelector("#chat-message-submit").onclick = function (e) {
+        const messageInputDom = document.querySelector("#chat-message-input");
+        const message = messageInputDom.value;
+        chatSocket.send(
+          JSON.stringify({
+            message: message,
+          })
+        );
+        messageInputDom.value = "";
+      };
+    </script>
+  </body>
+</html>
