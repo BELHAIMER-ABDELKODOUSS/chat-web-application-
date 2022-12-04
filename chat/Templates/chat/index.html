@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Chat Rooms</title>
+    <style>
+      #room-name-input {
+        margin: 1rem 0 0 0;
+        width: 29rem;
+        padding: 7px;
+        border-radius: 5px;
+        border-style: solid;
+        border: 1 solid black;
+        border-color: #e1e1e1;
+        border-color: none;
+      }
+      #room-name-submit {
+        width: 30rem;
+        margin: 1rem 0;
+        background-color: #0086fb;
+        border: none;
+        color: white;
+        height: 30px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>What chat room would you like to enter?</h3>
+    <input id="room-name-input" type="text" size="100" /><br />
+    <input id="room-name-submit" type="button" value="Enter" />
+
+    <script>
+      document.querySelector("#room-name-input").focus();
+      document.querySelector("#room-name-input").onkeyup = function (e) {
+        if (e.keyCode === 13) {
+          // enter, return
+          document.querySelector("#room-name-submit").click();
+        }
+      };
+
+      document.querySelector("#room-name-submit").onclick = function (e) {
+        var roomName = document.querySelector("#room-name-input").value;
+        window.location.pathname = "/chat/" + roomName + "/";
+      };
+    </script>
+  </body>
+</html>
